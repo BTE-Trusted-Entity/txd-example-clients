@@ -1,0 +1,20 @@
+{
+  "name": "txd-client-example-nodejs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "run:minimal": "npx ts-node minimal.ts"
+  },
+  "dependencies": {
+    "@kiltprotocol/augment-api": "^0.29.0-22",
+    "@polkadot/api": "^9.4.3",
+    "@polkadot/keyring": "^10.1.9",
+    "@polkadot/util": "^10.1.9",
+    "@polkadot/util-crypto": "^10.1.9",
+    "@types/yargs": "^17.0.13",
+    "axios": "^1.0.0",
+    "base64url": "^3.0.1",
+    "yargs": "^17.6.0"
+  }
+}
