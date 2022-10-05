@@ -34,3 +34,14 @@ Then you can submit it by running:
 ```bash
 yarn run:minimal --seed "${SEED}" --tx "${ENCODED_CALL_DATA}"
 ```
+
+### Create DID
+
+This example shows how to assemble a DID creation extrinsic and submit it to TXD.
+It shows how to work with non-trivial types and also how to retrieve the payment address.
+
+To run first go into the `nodejs` folder and execute:
+
+```bash
+yarn run:create-did --seed "${SEED}"
+```

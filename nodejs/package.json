@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "run:minimal": "npx ts-node minimal.ts"
+    "run:minimal": "npx ts-node minimal.ts",
+    "run:create-did": "npx ts-node create_did.ts"
   },
   "dependencies": {
     "@kiltprotocol/augment-api": "^0.29.0-22",

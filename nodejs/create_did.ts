@@ -29,7 +29,7 @@ const argv = yargs
 async function main (): Promise<void> {
   await cryptoWaitReady()
 
-  const {seed, endpoint} = argv
+  const { seed, endpoint } = argv
 
   // Create DID authentication key from mnemonic seed phrase
   const keyring = new Keyring({ type: 'sr25519' })
@@ -54,6 +54,7 @@ async function main (): Promise<void> {
 
   // create mnemonic and keys for new DID -> save that in a non test case
   const newDidMnemonic = mnemonicGenerate(12);
+  console.log("Mnemonic of new DID: " + newDidMnemonic);
   const newDidAuthKey = keyring.addFromUri(newDidMnemonic + '//did//0')
   const newDidAccountId = api.createType('AccountId32', newDidAuthKey.address)
 
