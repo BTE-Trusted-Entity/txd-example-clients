@@ -2,32 +2,10 @@ use clap::arg;
 use codec::Encode;
 use subxt::{tx::{TxPayload, PolkadotExtrinsicParams}, ext::{sp_core::{H256, hexdisplay::AsBytesRef, Pair, sr25519}, sp_runtime::{traits::BlakeTwo256, MultiAddress, generic::Header, app_crypto::Ss58Codec}}, SubstrateConfig, Config, OnlineClient};
 use blake2::{Blake2b, Digest, digest::consts::U32};
+type Blake2b256 = Blake2b<U32>;
 
 #[subxt::subxt(runtime_metadata_path = "metadata.scale")]
 pub mod kilt {}
-
-type Blake2b256 = Blake2b<U32>;
-
-#[derive(serde::Serialize, serde::Deserialize)]
-struct JwsHeader {
-    kid: String
-}
-
-#[derive(Clone, Debug, Default, Eq, PartialEq)]
-pub struct KiltConfig;
-
-impl Config for KiltConfig {
-    type Index = u64;
-    type BlockNumber = u64;
-    type Hash = H256;
-    type Hashing = BlakeTwo256;
-    type AccountId = <SubstrateConfig as Config>::AccountId;
-    type Address = MultiAddress<Self::AccountId, ()>;
-    type Header = Header<Self::BlockNumber, BlakeTwo256>;
-    type Signature = <SubstrateConfig as Config>::Signature;
-    type Extrinsic = <SubstrateConfig as Config>::Extrinsic;
-    type ExtrinsicParams = PolkadotExtrinsicParams<Self>;
-}
 
 #[tokio::main]
 async fn main() -> Result<(), Error>{
@@ -48,7 +26,7 @@ async fn main() -> Result<(), Error>{
     // generate DID authentication key
     let auth_key = create_did_auth_key(seed).await?;
 
-    // create submission
+    // send authenticated request to TXD to submit the extrinsic
     let submission = send_post_request(txd_endpoint, "/api/v1/submission", &tx_hex, &auth_key).await?;
    
     // get submission id from the response
@@ -64,8 +42,10 @@ async fn main() -> Result<(), Error>{
 
     // poll status of the submission until its finalized
     loop {
+        // wait a second
         tokio::time::sleep(std::time::Duration::from_millis(1000)).await;
 
+        // request status of the submission
         let path = format!("/api/v1/submission/{}", tx_id);
         let resp = send_get_request(txd_endpoint, &path, &auth_key).await?;
         let status = match resp.get("status") {
@@ -76,6 +56,8 @@ async fn main() -> Result<(), Error>{
             }
         }.as_str().ok_or(Error::DoesntWork)?;
         println!("Current status: {}", status);
+        
+        // if status is finalized, we are done
         if status == "Finalized" {
             break;
         }
@@ -169,4 +151,25 @@ impl<T: std::error::Error> From<T> for Error {
         eprintln!("Error: {}", error);
         Self::DoesntWork // :-D
     }
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+struct JwsHeader {
+    kid: String
+}
+
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct KiltConfig;
+
+impl Config for KiltConfig {
+    type Index = u64;
+    type BlockNumber = u64;
+    type Hash = H256;
+    type Hashing = BlakeTwo256;
+    type AccountId = <SubstrateConfig as Config>::AccountId;
+    type Address = MultiAddress<Self::AccountId, ()>;
+    type Header = Header<Self::BlockNumber, BlakeTwo256>;
+    type Signature = <SubstrateConfig as Config>::Signature;
+    type Extrinsic = <SubstrateConfig as Config>::Extrinsic;
+    type ExtrinsicParams = PolkadotExtrinsicParams<Self>;
 }
