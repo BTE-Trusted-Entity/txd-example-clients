@@ -56,7 +56,7 @@ async fn main() -> Result<(), Error>{
             }
         }.as_str().ok_or(Error::DoesntWork)?;
         println!("Current status: {}", status);
-        
+
         // if status is finalized, we are done
         if status == "Finalized" {
             break;
@@ -65,6 +65,7 @@ async fn main() -> Result<(), Error>{
     Ok(())
 }
 
+// create a hello-world extrinsic using up-to-date metadata from any kilt node
 async fn create_hello_world_tx(kilt_endpoint: &str) -> Result<String, Error> {
     let api = OnlineClient::<KiltConfig>::from_url(&kilt_endpoint).await?;
     let tx = kilt::tx().system().remark("Hello World!".as_bytes().to_vec());
@@ -74,6 +75,7 @@ async fn create_hello_world_tx(kilt_endpoint: &str) -> Result<String, Error> {
     Ok(tx_hex)
 }
 
+// derive the proper DID authentication key from the seed
 async fn create_did_auth_key(seed: &str) -> Result<sr25519::Pair, Error> {
     let auth_key_seed = seed.to_owned() + "//did//0";
     let auth_key = sr25519::Pair::from_string_with_seed(
@@ -83,6 +85,8 @@ async fn create_did_auth_key(seed: &str) -> Result<sr25519::Pair, Error> {
     Ok(auth_key)
 }
 
+// compute the key identifier for the authentication key
+// it is `did:kilt:<ss58-encoded-pub-key>#0x<blake256-hash-of-pub-key>`
 async fn create_key_id(auth_key: &sr25519::Pair) -> Result<String, Error> {
     let mut hasher = Blake2b256::new();
     hasher.update("\x00\x01"); /* PublicVerificationKey || Sr25519 */
@@ -96,6 +100,7 @@ async fn create_key_id(auth_key: &sr25519::Pair) -> Result<String, Error> {
     Ok(kid)
 }
 
+// send authenticated POST request to TXD
 async fn send_post_request(endpoint: &str, path: &str, body: &str, auth_key: &sr25519::Pair) -> Result<serde_json::Value, Error> {
     let kid = create_key_id(auth_key).await?;
     let jws = compute_jws(path, body, &kid, auth_key)?;
@@ -111,6 +116,7 @@ async fn send_post_request(endpoint: &str, path: &str, body: &str, auth_key: &sr
     Ok(resp)
 }
 
+// send authenticated GET request to TXD
 async fn send_get_request(endpoint: &str, path: &str, auth_key: &sr25519::Pair) -> Result<serde_json::Value, Error> {
     let kid = create_key_id(auth_key).await?;
     let jws = compute_jws(path, "", &kid, auth_key)?;
