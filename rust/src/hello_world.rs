@@ -8,17 +8,6 @@ pub mod kilt {}
 
 type Blake2b256 = Blake2b<U32>;
 
-#[derive(Debug, Clone, Eq, PartialEq, Encode)]
-enum Error {
-    DoesntWork
-}
-
-impl<T: std::error::Error> From<T> for Error {
-    fn from(_error: T) -> Self {
-        Self::DoesntWork // :-D
-    }
-}
-
 #[derive(serde::Serialize, serde::Deserialize)]
 struct JwsHeader {
     kid: String
@@ -168,4 +157,16 @@ fn compute_jws(path: &str, body: &str, kid: &str, pair: &sr25519::Pair) -> Resul
     let signature = base64_url::encode(&sig.0);
 
     Ok(format!("{}.{}.{}", header, payload, signature))
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Encode)]
+enum Error {
+    DoesntWork
+}
+
+impl<T: std::error::Error> From<T> for Error {
+    fn from(error: T) -> Self {
+        eprintln!("Error: {}", error);
+        Self::DoesntWork // :-D
+    }
 }
