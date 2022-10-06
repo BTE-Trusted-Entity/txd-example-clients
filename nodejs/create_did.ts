@@ -58,7 +58,7 @@ async function main (): Promise<void> {
   const newDidAuthKey = keyring.addFromUri(newDidMnemonic + '//did//0')
   const newDidAccountId = api.createType('AccountId32', newDidAuthKey.address)
 
-  // create creation transaction
+  // create DID creation transaction
   const createDetails: DidDidDetailsDidCreationDetails = api.createType('DidDidDetailsDidCreationDetails', {
     did: newDidAccountId,
     submitter: paymentAddress,
