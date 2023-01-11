@@ -45,9 +45,11 @@ async function main(): Promise<void> {
     256
   );
   const kid = `did:kilt:${authKey.address}#${authKeyHash}`;
+  console.log(kid);
 
   // create the token to authenticate the request
   const token = createJWS('/api/v1/submission', tx, kid, authKey);
+  console.log(token);
 
   // send a authenticated POST request to TXD with the transaction data
   const res = await axios.post(`${endpoint}/api/v1/submission`, tx, {
