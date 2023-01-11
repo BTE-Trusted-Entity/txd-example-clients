@@ -8,14 +8,18 @@
     "run:create-did": "npx ts-node create_did.ts"
   },
   "dependencies": {
-    "@kiltprotocol/augment-api": "^0.29.0-22",
-    "@polkadot/api": "^9.4.3",
-    "@polkadot/keyring": "^10.1.9",
-    "@polkadot/util": "^10.1.9",
-    "@polkadot/util-crypto": "^10.1.9",
+    "@kiltprotocol/augment-api": "^0.30.0",
+    "@polkadot/api": "^9.10.5",
+    "@polkadot/keyring": "^10.2.1",
+    "@polkadot/util": "^10.2.1",
+    "@polkadot/util-crypto": "^10.2.1",
     "@types/yargs": "^17.0.13",
-    "axios": "^1.0.0",
+    "axios": "^1.2.2",
     "base64url": "^3.0.1",
     "yargs": "^17.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20",
+    "ts-node": "^10.9.1"
   }
 }
