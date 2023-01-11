@@ -5,10 +5,12 @@
   "license": "MIT",
   "scripts": {
     "run:minimal": "npx ts-node minimal.ts",
-    "run:create-did": "npx ts-node create_did.ts"
+    "run:create-did": "npx ts-node create_did.ts",
+    "run:submit": "npx ts-node submitTx.ts"
   },
   "dependencies": {
     "@kiltprotocol/augment-api": "^0.30.0",
+    "@kiltprotocol/utils": "^0.30.0",
     "@polkadot/api": "^9.10.5",
     "@polkadot/keyring": "^10.2.1",
     "@polkadot/util": "^10.2.1",
@@ -16,6 +18,9 @@
     "@types/yargs": "^17.0.13",
     "axios": "^1.2.2",
     "base64url": "^3.0.1",
+    "dotenv": "^16.0.3",
+    "got": "^12.5.3",
+    "pino": "^8.8.0",
     "yargs": "^17.6.0"
   },
   "devDependencies": {
