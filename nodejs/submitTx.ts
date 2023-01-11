@@ -1,12 +1,16 @@
 import { setInterval } from 'timers/promises';
+import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Crypto } from '@kiltprotocol/utils';
-import got from 'got';
+// import got from 'got';
+import axios from 'axios';
 // import Boom from '@hapi/boom';
 
 import { configuration } from './configuration';
 import { logger } from './logger';
 import { makeKeypair } from './keypair';
+
+const tx = '0x00013048656c6c6f20576f726c6421';
 
 function createJWS(endpoint: string, body = ''): string {
   const keypair = makeKeypair();
@@ -36,10 +40,13 @@ async function pollTxStatus(id: string) {
 
   const timeout = 2 * 60 * 1000;
 
+  console.log('poll');
   for await (const startTime of setInterval(1000, Date.now())) {
-    const data = await got(`${TXDBaseUrl}${endpoint}`, { headers }).json<{
+    const data = (await axios.get(`${TXDBaseUrl}${endpoint}`, {
+      headers,
+    })) as {
       status: 'Pending' | 'InBlock' | 'Finalized' | 'Failed';
-    }>();
+    };
 
     if (data.status === 'Pending') {
       const now = Date.now();
@@ -67,18 +74,21 @@ async function pollTxStatus(id: string) {
 }
 
 export async function submitTx(tx: string) {
+  await cryptoWaitReady();
+
   const { TXDBaseUrl } = configuration;
 
   const endpoint = '/api/v1/submission';
   const headers = makeHeaders(endpoint, tx);
 
-  const { id } = await got
-    .post(`${TXDBaseUrl}${endpoint}`, {
-      body: tx,
-      headers,
-    })
-    .json<{ id: string }>();
+  const { id } = (await axios.post(`${TXDBaseUrl}${endpoint}`, tx, {
+    headers,
+  })) as { id: string };
 
   logger.debug('Transaction sent to TXD, polling status');
   await pollTxStatus(id);
 }
+
+submitTx(tx)
+  .catch(console.error)
+  .finally(() => process.exit());
