@@ -1,4 +1,4 @@
-import { ApiPromise, Keyring, WsProvider } from '@polkadot/api';
+import { Keyring } from '@polkadot/api';
 import { KeyringPair } from '@polkadot/keyring/types';
 import { cryptoWaitReady, blake2AsU8a, blake2AsHex } from '@polkadot/util-crypto';
 import base64url from 'base64url';
