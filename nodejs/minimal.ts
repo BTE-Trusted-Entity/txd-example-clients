@@ -23,7 +23,7 @@ const argv = yargs
     alias: 't',
     description: 'The hex encoded call data that should be submitted',
     type: 'string',
-    default: '0x00013048656c6c6f20576f726c6421', // system.remark('Hello World!')
+    default: '0x00002c68656c6c6f20776f726c64', // system.remark('Hello World!')
     demandOption: true
   })
   .help()
