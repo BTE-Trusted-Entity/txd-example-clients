@@ -59,7 +59,7 @@ async function main(): Promise<void> {
 
   // Poll the transaction status and exit when the transaction was finalized
   console.log('Waiting for transaction to be included...')
-  while (true) { 
+  while (true) {
     // wait a second
     await new Promise(resolve => setTimeout(resolve, 1000))
 
